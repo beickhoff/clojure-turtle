@@ -9,3 +9,5 @@ pom.xml.asc
 /.nrepl-port
 figwheel_server.log
 demo/public/js
+/.idea/
+*.iml
