@@ -239,10 +239,10 @@
        (alter-turtle turt alter-fn)
        )))
 
-(defn draw-turtle-marker
+(defn draw-turtle-marker:ORIGINAL
   "A helper function that draws the triangle that represents the turtle onto the screen."
   ([]
-     (draw-turtle-marker turtle))
+     (draw-turtle-marker:ORIGINAL turtle))
   ([turt]
      (let [
            ;; set up a copy of the turtle to draw the triangle that
@@ -292,25 +292,33 @@
                lines (map (partial apply new-line @turt-copy) from-to-point-pairs)]
            ;; draw the lines that represent the turtle 
            (dorun
-            (map draw-line lines)))
-         (let [{:keys [angle x y]} @turt
-               shell-w 15
-               shell-h 15
-               rotated (fn [[x0 y0]]
-                         (let [θ (-> angle (- 90) (mod 360) deg->radians)
-                               cosθ (Math/cos θ)
-                               sinθ (Math/sin θ)]
-                           [(+ (* x0 cosθ) (* y0 (- sinθ)))
-                            (+ (* x0 sinθ) (* y0 cosθ))]))
-               translated (fn [[x0 y0]]
-                            [(+ x x0)
-                             (+ y y0)])]
-           (apply q/ellipse (-> [0 (* shell-h 0.6)] rotated translated (conj 8 8)))
-           (apply q/ellipse (-> [(* shell-w -0.5) (* shell-h  0.4)] rotated translated (conj 5 5)))
-           (apply q/ellipse (-> [(* shell-w  0.5) (* shell-h  0.4)] rotated translated (conj 5 5)))
-           (apply q/ellipse (-> [(* shell-w -0.5) (* shell-h -0.4)] rotated translated (conj 5 5)))
-           (apply q/ellipse (-> [(* shell-w  0.5) (* shell-h -0.4)] rotated translated (conj 5 5)))
-           (q/ellipse x y shell-w shell-h))))))
+            (map draw-line lines)))))))
+
+(defn draw-turtle-marker
+  ([]
+     (draw-turtle-marker turtle))
+  ([turt]
+   (let [{:keys [angle color x y]} @turt
+         shell-w 17
+         shell-h 17
+         rotated (fn [[x0 y0]]
+                   (let [θ (-> angle (- 90) (mod 360) deg->radians)
+                         cosθ (Math/cos θ)
+                         sinθ (Math/sin θ)]
+                     [(+ (* x0 cosθ) (* y0 (- sinθ)))
+                      (+ (* x0 sinθ) (* y0 cosθ))]))
+         translated (fn [[x0 y0]]
+                      [(+ x x0)
+                       (+ y y0)])]
+     (q/stroke-weight 1)
+     (q/stroke 0xff 0xff 0xff)
+     (apply q/fill color)
+     (apply q/ellipse (-> [0 (* shell-h 0.6)] rotated translated (conj 10 10)))
+     (apply q/ellipse (-> [(* shell-w -0.45) (* shell-h  0.4)] rotated translated (conj 6 6)))
+     (apply q/ellipse (-> [(* shell-w  0.45) (* shell-h  0.4)] rotated translated (conj 6 6)))
+     (apply q/ellipse (-> [(* shell-w -0.45) (* shell-h -0.4)] rotated translated (conj 6 6)))
+     (apply q/ellipse (-> [(* shell-w  0.45) (* shell-h -0.4)] rotated translated (conj 6 6)))
+     (q/ellipse x y shell-w shell-h))))
 
 (defmacro all
   "This macro was created to substitute for the purpose served by the square brackets in Logo
@@ -382,7 +390,7 @@
   []
   (q/background 200)                 ;; Set the background colour to
                                      ;; a nice shade of grey.
-  (q/stroke-weight 3))
+  (q/stroke-weight 2))
 
 (defn setup
   "A helper function for the Quil rendering function."
